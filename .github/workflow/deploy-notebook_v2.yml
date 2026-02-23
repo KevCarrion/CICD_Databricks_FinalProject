@@ -91,7 +91,7 @@ jobs:
         
         echo "Buscando cluster existente: $CLUSTER_NAME"
         
-        # Obtener lista de clusters
+        #-- Obtener lista de clusters
         clusters_response=$(curl -s -X GET \
           -H "Authorization: Bearer $DEST_TOKEN" \
           "$DEST_HOST/api/2.0/clusters/list")
