@@ -47,13 +47,13 @@ Se implementa una arquitectura Medallion en Azure Databricks para transformar da
 📊 Databricks Dashboards
 ```
 
-![Arquitectura Medallion](Medallion_architecture_FinalProject.png)
+![Arquitectura Medallion](Evidencias/Workflow_completed.png)
 
 ---
 
 ## ⚙️ Workflow ETL
 
-![Workflow Ejecutado](Workflow_completed.png)
+![Workflow Ejecutado](Evidencias/Workflow_completed.png)
 
 ### Estructura del Workflow
 
