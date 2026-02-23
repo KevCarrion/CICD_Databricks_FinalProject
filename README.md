@@ -1,242 +1,116 @@
-📘 Renewable Energy Generation Analytics – Azure Databricks Medallion Architecture
-🚀 Project Overview
 
-El presente proyecto tiene como objetivo analizar el desempeño operativo de activos de generación de energía renovable, integrando datos de producción y variables hidrológicas para construir indicadores clave de desempeño (KPIs) orientados a la toma de decisiones.
+<div align="center">
 
-A partir de datasets estructurados en formato CSV almacenados en un Data Lake en Azure, se busca:
+# ⚡ Renewable Energy Generation Analytics ETL Pipeline
+### Arquitectura Medallion en Azure Databricks
 
-Evaluar la producción energética por central
+[![Databricks](https://img.shields.io/badge/Databricks-FF3621?style=for-the-badge&logo=databricks&logoColor=white)](https://databricks.com/)
+[![Azure](https://img.shields.io/badge/Azure-0078D4?style=for-the-badge&logo=microsoft-azure&logoColor=white)](https://azure.microsoft.com/)
+[![PySpark](https://img.shields.io/badge/PySpark-E25A1C?style=for-the-badge&logo=apache-spark&logoColor=white)](https://spark.apache.org/)
+[![Delta Lake](https://img.shields.io/badge/Delta_Lake-00ADD8?style=for-the-badge&logo=delta&logoColor=white)](https://delta.io/)
+[![Unity Catalog](https://img.shields.io/badge/Unity_Catalog-000000?style=for-the-badge&logo=databricks&logoColor=white)](https://docs.databricks.com/en/data-governance/unity-catalog/index.html)
+[![CI/CD](https://img.shields.io/badge/CI%2FCD-GitHub_Actions-2088FF?style=for-the-badge&logo=github-actions&logoColor=white)](https://github.com/features/actions)
 
-Analizar la disponibilidad operativa
+*Pipeline analítico para evaluación del desempeño de activos de generación renovable usando arquitectura Medallion, Unity Catalog y CI/CD completo.*
 
-Calcular el factor de planta (Capacity Factor)
+</div>
 
-Medir el impacto de indisponibilidades
+---
 
-Integrar variables hidrológicas relevantes
+## 🎯 Descripción
 
-Construir una capa analítica lista para dashboards ejecutivos
+Proyecto orientado al análisis del desempeño operativo de centrales de generación renovable, integrando datos de producción energética e información hidrológica para construir indicadores estratégicos como:
 
-Para lograrlo, se implementa una arquitectura Medallion en Azure Databricks que permite estructurar el flujo de datos desde su estado crudo hasta su forma analítica optimizada, garantizando gobernanza, trazabilidad y escalabilidad.
+- Producción total por central
+- Factor de planta (Capacity Factor)
+- Disponibilidad operativa
+- Impacto de indisponibilidades
+- Análisis comparativo por periodo
 
-El resultado final no es únicamente un ETL, sino una plataforma analítica estructurada y gobernada para el monitoreo del desempeño energético.
+Se implementa una arquitectura Medallion en Azure Databricks para transformar datos crudos almacenados en Azure Data Lake (ADLS Gen2) hasta generar tablas optimizadas para consumo analítico y dashboards ejecutivos.
 
-🏗 Arquitectura General
-Arquitectura Medallion
+---
 
-La solución se basa en el patrón Medallion (Bronze → Silver → Golden), bajo Unity Catalog y orquestado mediante Databricks Workflows.
+## 🏛️ Arquitectura
 
-🔹 Capa RAW (Azure Data Lake Gen2)
+### Flujo de Datos
 
-Fuente: Archivos CSV
+```
+📄 CSV (Azure Data Lake - RAW)
+    ↓
+🥉 Bronze Layer (Ingesta sin transformación)
+    ↓
+🥈 Silver Layer (Limpieza + Reglas de negocio)
+    ↓
+🥇 Golden Layer (KPIs y agregaciones optimizadas)
+    ↓
+📊 Databricks Dashboards
+```
 
-Autenticación: Managed Identity
+![Arquitectura Medallion](Medallion_architecture_FinalProject.png)
 
-Ubicación: Azure Data Lake Storage Gen2
+---
 
-Restricción del proyecto:
+## ⚙️ Workflow ETL
 
-❌ No se utiliza DBFS como raw
+![Workflow Ejecutado](Workflow_completed.png)
 
-❌ No se utilizan Volumes como raw
+### Estructura del Workflow
 
-Esta capa contiene la información original sin transformación, asegurando integridad y trazabilidad.
+1. **PrepAmb**
+   - Preparación de entorno
+   - Validación de catálogo y esquemas
+   - Inicialización de parámetros
 
-🥉 Bronze – Extract
+2. **Ingesta Paralela Bronze**
+   - ingest_generation
+   - ingest_hydrology
 
-Objetivo: Preservar la data en su estado más cercano al origen.
+3. **Transform**
+   - Limpieza y normalización
+   - Integración entre datasets
+   - Aplicación de reglas de negocio
 
-Características:
+4. **Load**
+   - Construcción de KPIs
+   - Agregaciones optimizadas
+   - OPTIMIZE + ZORDER
 
-Lectura directa desde ADLS
+5. **Grants**
+   - Asignación de permisos en Unity Catalog
+   - Control de acceso por roles
 
-Escritura en formato Delta
+---
 
-Inclusión de metadatos:
+## 📦 Capas del Pipeline
 
-ingestion_timestamp
+### 🥉 Bronze
+- Datos crudos desde ADLS
+- Persistencia en formato Delta
+- Inclusión de metadatos de ingesta
 
-source_file
+### 🥈 Silver
+- Validaciones
+- Eliminación de duplicados
+- Cast de tipos
+- Integración de datasets
+- Estandarización de columnas
 
-environment
-
-En esta capa no se aplican reglas de negocio complejas; solo estructuración básica y persistencia confiable.
-
-🥈 Silver – Transform
-
-Objetivo: Mejorar la calidad y consistencia de los datos.
-
-Transformaciones realizadas:
-
-Cast de tipos de datos
-
-Limpieza de valores nulos
-
-Eliminación de duplicados
-
-Validaciones de reglas de negocio
-
-Estandarización de columnas
-
-Integración entre datasets (producción + hidrología)
-
-Esta capa representa datos estructurados y confiables listos para análisis.
-
-🥇 Golden – Load (Capa Analítica)
-
-Objetivo: Generar tablas optimizadas para consumo analítico y visualización.
-
-Se construyen:
-
-Agregaciones por central
-
-KPIs de desempeño
-
-Indicadores de disponibilidad
-
-Factor de planta
-
-Impacto de indisponibilidades
-
-Métricas consolidadas por periodo
-
-Se aplican optimizaciones:
-
-OPTIMIZE
-
-ZORDER
-
-Tablas Delta optimizadas para consulta
-
-Esta capa alimenta directamente los dashboards ejecutivos.
-
-⚙️ Workflow Implementado
-
-El pipeline es orquestado mediante un Databricks Job estructurado de la siguiente manera:
-
-1️⃣ PrepAmb
-
-Preparación del entorno
-
-Validación de catálogos y esquemas
-
-Inicialización de variables
-
-2️⃣ Ingesta Paralela (Bronze)
-
-ingest_generation
-
-ingest_hydrology
-
-Permite cargar múltiples fuentes de manera concurrente, mejorando eficiencia.
-
-3️⃣ Transform
-
-Procesa Bronze → Silver
-
-Aplica reglas de negocio
-
-Integra datasets
-
-4️⃣ Load
-
-Genera capa Golden
-
-Calcula KPIs
-
-Aplica optimización Delta
-
-5️⃣ Grants
-
-Asigna permisos en Unity Catalog
-
-Control de acceso por roles:
-
-DataEngineers
-
-DataScientists
-
-Este flujo garantiza:
-
-Orquestación controlada
-
-Separación clara de responsabilidades
-
-Gobernanza estructurada
-
-🔐 Seguridad y Gobernanza
-
-Acceso a ADLS exclusivamente mediante Managed Identity
-
-Unity Catalog para:
-
-Aislamiento de entornos
-
-Control de acceso basado en roles
-
-Gobernanza centralizada
-
-Separación entre entorno Dev y Prod
-
-Sin credenciales embebidas en código
-
-🌎 Entornos
-Desarrollo
-
-Rama: develop
-
-Workspace: Dev
-
-Uso: pruebas y validaciones
-
-Producción
-
-Rama: main
-
-Workspace: Prod
-
-Despliegue vía CI/CD
-
-🔄 CI/CD – GitHub Actions
-
-El proyecto integra un pipeline automatizado que:
-
-Valida cambios en Pull Requests
-
-Despliega notebooks automáticamente
-
-Actualiza Workflows
-
-Permite promoción controlada a producción
-
-Esto asegura:
-
-Versionamiento formal
-
-Reproducibilidad
-
-Control de cambios
-
-Buenas prácticas DevOps
-
-📊 Dashboard Final
-
-Las tablas Golden alimentan dashboards en Databricks con:
-
-Producción total por central
-
-Tendencia del factor de planta
-
-Análisis de indisponibilidades
-
-Comparativos por periodo
-
-KPIs ejecutivos consolidados
-
-La capa Golden está optimizada para consultas analíticas de alto rendimiento.
-
-📁 Estructura del Repositorio
-project-root/
+### 🥇 Golden
+- KPIs de desempeño energético
+- Agregaciones por central y periodo
+- Tablas optimizadas para BI
+- Alto rendimiento en consultas
+
+---
+
+## 📁 Estructura del Proyecto
+
+```
+renewable-energy-etl/
+│
+├── .github/workflows/
+│   └── deploy.yml
 │
 ├── notebooks/
 │   ├── Preparacion_ambiente.py
@@ -249,40 +123,57 @@ project-root/
 ├── workflows/
 │   └── etl_workflow.json
 │
-├── .github/workflows/
-│   └── deploy.yml
+├── reversion/
+│   └── Drop_Medallion.py
 │
 ├── Medallion_architecture_FinalProject.png
 ├── Workflow_completed.png
 └── README.md
-🎯 Cumplimiento del Proyecto Final
+```
 
-El proyecto cumple con:
+---
 
-Uso de arquitectura Medallion
+## 🛠️ Tecnologías
 
-ETL completo en PySpark
+| Tecnología | Propósito |
+|------------|-----------|
+| Azure Databricks | Procesamiento distribuido con Spark |
+| Delta Lake | Storage ACID y optimización |
+| PySpark | Transformación de datos |
+| Azure Data Lake Gen2 | Capa RAW |
+| Unity Catalog | Gobernanza y seguridad |
+| GitHub Actions | Automatización CI/CD |
 
-Uso obligatorio de Managed Identity
+---
 
-Integración de mínimo dos datasets
+## 🔐 Seguridad y Gobernanza
 
-Gobernanza mediante Unity Catalog
+- Acceso a ADLS mediante Managed Identity
+- Uso de Unity Catalog
+- Separación de entornos Dev / Prod
+- Control de acceso basado en roles
 
-Integración CI/CD
+---
 
-Visualización final
+## 🚀 Ejecución
 
-🏁 Ejecución del Proyecto
+1. Cargar archivos CSV en ADLS (contenedor RAW)
+2. Validar permisos de Managed Identity
+3. Ejecutar Workflow en entorno Dev
+4. Validar capa Silver y Golden
+5. Promover cambios a Producción vía GitHub
 
-Cargar archivos CSV en el contenedor RAW de ADLS
+---
 
-Validar permisos de Managed Identity
+## 👤 Autor
 
-Ejecutar Workflow en entorno Dev
+**Proyecto Final – Ingeniería de Datos con Databricks**  
+Arquitectura Medallion | Azure | PySpark | CI/CD
 
-Validar tablas Silver y Golden
+---
 
-Promover a Producción mediante merge a main
+<div align="center">
 
-Visualizar dashboard en Databricks
+**Proyecto Académico – Arquitectura Medallion en Azure Databricks**
+
+</div>
