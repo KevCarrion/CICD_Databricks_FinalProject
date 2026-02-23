@@ -68,7 +68,7 @@ jobs:
           -H "Authorization: Bearer $DEST_TOKEN" \
           "$DEST_HOST/api/2.1/jobs/list")
         
-        # Extraer job_id si existe el workflow
+        #-- Extraer job_id si existe el workflow
         existing_job_id=$(echo "$workflows_response" | jq -r --arg name "$WORKFLOW_NAME" '.jobs[]? | select(.settings.name == $name) | .job_id')
         
         if [ "$existing_job_id" != "" ] && [ "$existing_job_id" != "null" ]; then
