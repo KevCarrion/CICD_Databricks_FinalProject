@@ -1,0 +1,745 @@
+{
+  "datasets": [
+    {
+      "name": "f7ab34c7",
+      "displayName": "daily_kpis",
+      "queryLines": [
+        "SELECT * FROM catalog_final_project.golden.daily_kpis"
+      ]
+    },
+    {
+      "name": "45823ad1",
+      "displayName": "plant_performance_summary",
+      "queryLines": [
+        "SELECT * FROM catalog_final_project.golden.plant_performance_summary"
+      ]
+    },
+    {
+      "name": "1f8d6184",
+      "displayName": "Daily Plant Performance Metrics Overview",
+      "queryLines": [
+        "SELECT\r\n",
+        "  plant_id,\r\n",
+        "  plant_name,\r\n",
+        "  date,\r\n",
+        "  energy_mwh,\r\n",
+        "  avg_capacity_factor,\r\n",
+        "  outage_hours,\r\n",
+        "  lost_energy_mwh,\r\n",
+        "  loss_of_profit_usd,\r\n",
+        "  avg_turbine_efficiency,\r\n",
+        "  avg_inflow_m3s\r\n",
+        "FROM catalog_final_project.golden.daily_kpis\r\n",
+        "ORDER BY date, plant_id;"
+      ],
+      "catalog": "catalog_final_project",
+      "schema": "default"
+    },
+    {
+      "name": "76930b1f",
+      "displayName": "Plant Performance Metrics Ranked by Profit Loss",
+      "queryLines": [
+        "SELECT\r\n",
+        "  plant_id,\r\n",
+        "  plant_name,\r\n",
+        "  energy_mwh_total,\r\n",
+        "  avg_capacity_factor_overall,\r\n",
+        "  outage_hours_total,\r\n",
+        "  lost_energy_mwh_total,\r\n",
+        "  loss_of_profit_usd_total\r\n",
+        "FROM catalog_final_project.golden.plant_performance_summary\r\n",
+        "ORDER BY loss_of_profit_usd_total DESC;"
+      ],
+      "catalog": "catalog_final_project",
+      "schema": "default"
+    }
+  ],
+  "pages": [
+    {
+      "name": "b6a3e66d",
+      "displayName": "Main KPIs",
+      "layout": [
+        {
+          "widget": {
+            "name": "c5c62176",
+            "queries": [
+              {
+                "name": "main_query",
+                "query": {
+                  "datasetName": "1f8d6184",
+                  "fields": [
+                    {
+                      "name": "plant_name",
+                      "expression": "`plant_name`"
+                    },
+                    {
+                      "name": "sum(avg_turbine_efficiency)",
+                      "expression": "SUM(`avg_turbine_efficiency`)"
+                    },
+                    {
+                      "name": "sum(lost_energy_mwh)",
+                      "expression": "SUM(`lost_energy_mwh`)"
+                    }
+                  ],
+                  "disaggregated": false
+                }
+              }
+            ],
+            "spec": {
+              "version": 3,
+              "frame": {
+                "showTitle": false
+              },
+              "widgetType": "bar",
+              "encodings": {
+                "x": {
+                  "fieldName": "plant_name",
+                  "scale": {
+                    "type": "categorical"
+                  }
+                },
+                "y": {
+                  "scale": {
+                    "type": "quantitative"
+                  },
+                  "fields": [
+                    {
+                      "fieldName": "sum(avg_turbine_efficiency)"
+                    },
+                    {
+                      "fieldName": "sum(lost_energy_mwh)"
+                    }
+                  ]
+                }
+              }
+            }
+          },
+          "position": {
+            "x": 0,
+            "y": 1,
+            "width": 6,
+            "height": 6
+          }
+        },
+        {
+          "widget": {
+            "name": "952f0336",
+            "queries": [
+              {
+                "name": "main_query",
+                "query": {
+                  "datasetName": "76930b1f",
+                  "fields": [
+                    {
+                      "name": "plant_name",
+                      "expression": "`plant_name`"
+                    },
+                    {
+                      "name": "sum(loss_of_profit_usd_total)",
+                      "expression": "SUM(`loss_of_profit_usd_total`)"
+                    }
+                  ],
+                  "disaggregated": false
+                }
+              }
+            ],
+            "spec": {
+              "version": 3,
+              "widgetType": "bar",
+              "encodings": {
+                "x": {
+                  "fieldName": "plant_name",
+                  "scale": {
+                    "type": "categorical"
+                  }
+                },
+                "y": {
+                  "fieldName": "sum(loss_of_profit_usd_total)",
+                  "scale": {
+                    "type": "quantitative"
+                  }
+                }
+              }
+            }
+          },
+          "position": {
+            "x": 6,
+            "y": 1,
+            "width": 6,
+            "height": 6
+          }
+        },
+        {
+          "widget": {
+            "name": "7fba8775",
+            "queries": [
+              {
+                "name": "main_query",
+                "query": {
+                  "datasetName": "f7ab34c7",
+                  "fields": [
+                    {
+                      "name": "sum(loss_of_profit_usd)",
+                      "expression": "SUM(`loss_of_profit_usd`)"
+                    },
+                    {
+                      "name": "sum(avg_capacity_factor)",
+                      "expression": "SUM(`avg_capacity_factor`)"
+                    }
+                  ],
+                  "disaggregated": false
+                }
+              }
+            ],
+            "spec": {
+              "version": 2,
+              "frame": {
+                "showTitle": false,
+                "showDescription": false
+              },
+              "widgetType": "counter",
+              "encodings": {
+                "value": {
+                  "fieldName": "sum(avg_capacity_factor)"
+                },
+                "target": {
+                  "fieldName": "sum(loss_of_profit_usd)",
+                  "change": {
+                    "type": "percent"
+                  }
+                }
+              }
+            }
+          },
+          "position": {
+            "x": 0,
+            "y": 0,
+            "width": 2,
+            "height": 1
+          }
+        },
+        {
+          "widget": {
+            "name": "929a3828",
+            "queries": [
+              {
+                "name": "main_query",
+                "query": {
+                  "datasetName": "f7ab34c7",
+                  "fields": [
+                    {
+                      "name": "sum(energy_mwh)",
+                      "expression": "SUM(`energy_mwh`)"
+                    }
+                  ],
+                  "disaggregated": false
+                }
+              }
+            ],
+            "spec": {
+              "version": 2,
+              "frame": {
+                "showTitle": false,
+                "showDescription": false
+              },
+              "widgetType": "counter",
+              "encodings": {
+                "value": {
+                  "fieldName": "sum(energy_mwh)"
+                }
+              }
+            }
+          },
+          "position": {
+            "x": 2,
+            "y": 0,
+            "width": 2,
+            "height": 1
+          }
+        },
+        {
+          "widget": {
+            "name": "f89b1ed5",
+            "queries": [
+              {
+                "name": "dashboards/01f1106128851b71a6cf70be008e0320/datasets/01f110613f9215258d93adfff37c4b70_date",
+                "query": {
+                  "datasetName": "f7ab34c7",
+                  "fields": [
+                    {
+                      "name": "date",
+                      "expression": "`date`"
+                    },
+                    {
+                      "name": "date_associativity",
+                      "expression": "COUNT_IF(`associative_filter_predicate_group`)"
+                    }
+                  ],
+                  "disaggregated": false
+                }
+              }
+            ],
+            "spec": {
+              "version": 2,
+              "frame": {
+                "showTitle": true
+              },
+              "widgetType": "filter-date-picker",
+              "encodings": {
+                "fields": [
+                  {
+                    "fieldName": "date",
+                    "queryName": "dashboards/01f1106128851b71a6cf70be008e0320/datasets/01f110613f9215258d93adfff37c4b70_date"
+                  }
+                ]
+              }
+            }
+          },
+          "position": {
+            "x": 4,
+            "y": 0,
+            "width": 8,
+            "height": 1
+          }
+        },
+        {
+          "widget": {
+            "name": "81fc9d6d",
+            "queries": [
+              {
+                "name": "main_query",
+                "query": {
+                  "datasetName": "1f8d6184",
+                  "fields": [
+                    {
+                      "name": "date",
+                      "expression": "`date`"
+                    },
+                    {
+                      "name": "plant_name",
+                      "expression": "`plant_name`"
+                    },
+                    {
+                      "name": "avg_turbine_efficiency",
+                      "expression": "`avg_turbine_efficiency`"
+                    },
+                    {
+                      "name": "avg_inflow_m3s",
+                      "expression": "`avg_inflow_m3s`"
+                    },
+                    {
+                      "name": "outage_hours",
+                      "expression": "`outage_hours`"
+                    },
+                    {
+                      "name": "loss_of_profit_usd",
+                      "expression": "`loss_of_profit_usd`"
+                    },
+                    {
+                      "name": "energy_mwh",
+                      "expression": "`energy_mwh`"
+                    }
+                  ],
+                  "disaggregated": true
+                }
+              }
+            ],
+            "spec": {
+              "version": 2,
+              "widgetType": "table",
+              "encodings": {
+                "columns": [
+                  {
+                    "fieldName": "date"
+                  },
+                  {
+                    "fieldName": "plant_name"
+                  },
+                  {
+                    "fieldName": "avg_turbine_efficiency"
+                  },
+                  {
+                    "fieldName": "avg_inflow_m3s"
+                  },
+                  {
+                    "fieldName": "outage_hours"
+                  },
+                  {
+                    "fieldName": "loss_of_profit_usd"
+                  },
+                  {
+                    "fieldName": "energy_mwh"
+                  }
+                ]
+              }
+            }
+          },
+          "position": {
+            "x": 0,
+            "y": 7,
+            "width": 12,
+            "height": 6
+          }
+        }
+      ],
+      "pageType": "PAGE_TYPE_CANVAS",
+      "layoutVersion": "GRID_V1"
+    },
+    {
+      "name": "a4256802",
+      "displayName": "Global Filters",
+      "layout": [
+        {
+          "widget": {
+            "name": "19b98d1f",
+            "spec": {
+              "version": 2,
+              "widgetType": "filter-single-select",
+              "encodings": {},
+              "frame": {
+                "showTitle": true
+              }
+            }
+          },
+          "position": {
+            "x": 0,
+            "y": 0,
+            "width": 1,
+            "height": 2
+          }
+        },
+        {
+          "widget": {
+            "name": "64897f9b",
+            "spec": {
+              "version": 2,
+              "widgetType": "filter-single-select",
+              "encodings": {},
+              "frame": {
+                "showTitle": true
+              }
+            }
+          },
+          "position": {
+            "x": 0,
+            "y": 2,
+            "width": 1,
+            "height": 2
+          }
+        }
+      ],
+      "pageType": "PAGE_TYPE_GLOBAL_FILTERS",
+      "layoutVersion": "GRID_V1"
+    },
+    {
+      "name": "a3b07036",
+      "displayName": "Trends & Drivers",
+      "layout": [
+        {
+          "widget": {
+            "name": "0fc5e893",
+            "queries": [
+              {
+                "name": "main_query",
+                "query": {
+                  "datasetName": "1f8d6184",
+                  "fields": [
+                    {
+                      "name": "monthly(date)",
+                      "expression": "DATE_TRUNC(\"MONTH\", `date`)"
+                    },
+                    {
+                      "name": "sum(energy_mwh)",
+                      "expression": "SUM(`energy_mwh`)"
+                    }
+                  ],
+                  "filters": [
+                    {
+                      "expression": "`plant_name` IN (`plant_name`) OR TRUE"
+                    }
+                  ],
+                  "disaggregated": false
+                }
+              }
+            ],
+            "spec": {
+              "version": 3,
+              "widgetType": "line",
+              "encodings": {
+                "x": {
+                  "fieldName": "monthly(date)",
+                  "scale": {
+                    "type": "temporal"
+                  }
+                },
+                "y": {
+                  "fieldName": "sum(energy_mwh)",
+                  "scale": {
+                    "type": "quantitative"
+                  }
+                }
+              }
+            }
+          },
+          "position": {
+            "x": 0,
+            "y": 2,
+            "width": 5,
+            "height": 5
+          }
+        },
+        {
+          "widget": {
+            "name": "89df9e2f",
+            "queries": [
+              {
+                "name": "main_query",
+                "query": {
+                  "datasetName": "1f8d6184",
+                  "fields": [
+                    {
+                      "name": "monthly(date)",
+                      "expression": "DATE_TRUNC(\"MONTH\", `date`)"
+                    },
+                    {
+                      "name": "sum(outage_hours)",
+                      "expression": "SUM(`outage_hours`)"
+                    }
+                  ],
+                  "filters": [
+                    {
+                      "expression": "`plant_name` IN (`plant_name`) OR TRUE"
+                    }
+                  ],
+                  "disaggregated": false
+                }
+              }
+            ],
+            "spec": {
+              "version": 3,
+              "mark": {
+                "colors": [
+                  {
+                    "themeColorType": "visualizationColors",
+                    "position": 4
+                  },
+                  {
+                    "themeColorType": "visualizationColors",
+                    "position": 2
+                  },
+                  {
+                    "themeColorType": "visualizationColors",
+                    "position": 3
+                  },
+                  {
+                    "themeColorType": "visualizationColors",
+                    "position": 4
+                  },
+                  {
+                    "themeColorType": "visualizationColors",
+                    "position": 5
+                  },
+                  {
+                    "themeColorType": "visualizationColors",
+                    "position": 6
+                  },
+                  {
+                    "themeColorType": "visualizationColors",
+                    "position": 7
+                  },
+                  {
+                    "themeColorType": "visualizationColors",
+                    "position": 8
+                  },
+                  {
+                    "themeColorType": "visualizationColors",
+                    "position": 9
+                  },
+                  {
+                    "themeColorType": "visualizationColors",
+                    "position": 10
+                  }
+                ]
+              },
+              "widgetType": "line",
+              "encodings": {
+                "x": {
+                  "fieldName": "monthly(date)",
+                  "scale": {
+                    "type": "temporal"
+                  }
+                },
+                "y": {
+                  "fieldName": "sum(outage_hours)",
+                  "scale": {
+                    "type": "quantitative"
+                  }
+                }
+              }
+            }
+          },
+          "position": {
+            "x": 5,
+            "y": 2,
+            "width": 5,
+            "height": 5
+          }
+        },
+        {
+          "widget": {
+            "name": "8ef41fff",
+            "queries": [
+              {
+                "name": "main_query",
+                "query": {
+                  "datasetName": "1f8d6184",
+                  "fields": [
+                    {
+                      "name": "monthly(date)",
+                      "expression": "DATE_TRUNC(\"MONTH\", `date`)"
+                    },
+                    {
+                      "name": "sum(avg_inflow_m3s)",
+                      "expression": "SUM(`avg_inflow_m3s`)"
+                    }
+                  ],
+                  "filters": [
+                    {
+                      "expression": "`plant_name` IN (`plant_name`) OR TRUE"
+                    }
+                  ],
+                  "disaggregated": false
+                }
+              }
+            ],
+            "spec": {
+              "version": 3,
+              "widgetType": "line",
+              "encodings": {
+                "x": {
+                  "fieldName": "monthly(date)",
+                  "scale": {
+                    "type": "temporal"
+                  }
+                },
+                "y": {
+                  "fieldName": "sum(avg_inflow_m3s)",
+                  "scale": {
+                    "type": "quantitative"
+                  }
+                }
+              }
+            }
+          },
+          "position": {
+            "x": 0,
+            "y": 7,
+            "width": 5,
+            "height": 5
+          }
+        },
+        {
+          "widget": {
+            "name": "612cec13",
+            "queries": [
+              {
+                "name": "main_query",
+                "query": {
+                  "datasetName": "1f8d6184",
+                  "fields": [
+                    {
+                      "name": "avg_inflow_m3s",
+                      "expression": "`avg_inflow_m3s`"
+                    },
+                    {
+                      "name": "energy_mwh",
+                      "expression": "`energy_mwh`"
+                    }
+                  ],
+                  "disaggregated": true
+                }
+              }
+            ],
+            "spec": {
+              "version": 3,
+              "widgetType": "scatter",
+              "encodings": {
+                "x": {
+                  "fieldName": "avg_inflow_m3s",
+                  "scale": {
+                    "type": "quantitative"
+                  }
+                },
+                "y": {
+                  "fieldName": "energy_mwh",
+                  "scale": {
+                    "type": "quantitative"
+                  }
+                }
+              }
+            }
+          },
+          "position": {
+            "x": 5,
+            "y": 7,
+            "width": 5,
+            "height": 5
+          }
+        },
+        {
+          "widget": {
+            "name": "3d20c453",
+            "queries": [
+              {
+                "name": "dashboards/01f1106128851b71a6cf70be008e0320/datasets/01f110613f9215258d93adfff37c4b70_plant_name",
+                "query": {
+                  "datasetName": "f7ab34c7",
+                  "fields": [
+                    {
+                      "name": "plant_name",
+                      "expression": "`plant_name`"
+                    },
+                    {
+                      "name": "plant_name_associativity",
+                      "expression": "COUNT_IF(`associative_filter_predicate_group`)"
+                    }
+                  ],
+                  "disaggregated": false
+                }
+              }
+            ],
+            "spec": {
+              "version": 2,
+              "frame": {
+                "showTitle": true
+              },
+              "widgetType": "filter-multi-select",
+              "encodings": {
+                "fields": [
+                  {
+                    "fieldName": "plant_name",
+                    "queryName": "dashboards/01f1106128851b71a6cf70be008e0320/datasets/01f110613f9215258d93adfff37c4b70_plant_name"
+                  }
+                ]
+              }
+            }
+          },
+          "position": {
+            "x": 0,
+            "y": 0,
+            "width": 10,
+            "height": 2
+          }
+        }
+      ],
+      "pageType": "PAGE_TYPE_CANVAS",
+      "layoutVersion": "GRID_V1"
+    }
+  ],
+  "uiSettings": {
+    "theme": {
+      "widgetHeaderAlignment": "ALIGNMENT_UNSPECIFIED"
+    },
+    "applyModeEnabled": false
+  }
+}
