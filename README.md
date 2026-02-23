@@ -47,7 +47,7 @@ Se implementa una arquitectura Medallion en Azure Databricks para transformar da
 📊 Databricks Dashboards
 ```
 
-![Arquitectura Medallion](Evidencias/Workflow_completed.png)
+![Arquitectura Medallion](Evidencias/Medallion_architecture_VF.png)
 
 ---
 
