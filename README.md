@@ -167,13 +167,12 @@ renewable-energy-etl/
 
 ## 👤 Autor
 
-**Proyecto Final – Ingeniería de Datos con Databricks**  
-Arquitectura Medallion | Azure | PySpark | CI/CD
+**Kevin Carrion**  
 
 ---
 
 <div align="center">
 
-**Proyecto Académico – Arquitectura Medallion en Azure Databricks**
+**Proyecto Final – ETL Azure Databricks**
 
 </div>
